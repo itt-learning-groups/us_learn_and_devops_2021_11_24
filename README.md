@@ -18,7 +18,10 @@
 
 ### Alternatives to helm
 
-* See e.g. the [Terraform Kubernetes provider](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs)
+See e.g.
+
+* [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/)
+* the [Terraform Kubernetes provider](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs)
 
 ## Lab
 
@@ -153,3 +156,43 @@ Now we can run the following to deploy to `qa`:
 * You can then adapt the starter templates to create the equivalent of the helm chart we just built from "scratch".
   This is arguably easier.
   It also allows you to take advantage of some more-sophisticated options you'll find pre-built into these templates that we didn't use in our from-scratch version because the start templates include a set of `_helper.tpl` utilities.
+
+### 4. Add secrets and a namespace to our helm release
+
+* Set your image-registry and DB credentials as environment variables so you can use them in `--set` options when running the helm install/upgrade. We'll use our `prod` environment as an example:
+  * export DOCKER_SERVER=...
+  * export DOCKER_USERNAME=...
+  * export DOCKER_PSWD=...
+  * export DOCKER_EMAIL=...
+  * export DB_USERNAME=...
+  * export DB_PSWD_PROD=...
+
+* Add empty placeholders for these values to your `values.yaml` file:
+
+!["021"](img/021.png "021")
+
+* Add a k8s secrets template for each secret:
+
+!["022"](img/022.png "022")
+
+* Now we can deploy to `prod` without already having these secrets in place; helm will do it for us.
+  We can also ask helm to create the `prod` namespace if it doesn't already exist, by using the `--create-namespace` option:
+
+      helm upgrade --install todoapi ./todoapi \
+        --create-namespace \
+        --set 'ingress.hosts.host=todoapi.prod.ittlearninggroups.com' \
+        --set 'ingress.tls.hosts={todoapi.prod.ittlearninggroups.com}' \
+        --set 'db.name.value=todoapiprod' \
+        --set "imageCredentials.registry=${DOCKER_SERVER}" \
+        --set "imageCredentials.username=${DOCKER_USERNAME}" \
+        --set "imageCredentials.password=${DOCKER_PSWD}" \
+        --set "imageCredentials.email=${DOCKER_EMAIL}" \
+        --set "dbCredentials.dbusername=${DB_USERNAME}" \
+        --set "dbCredentials.dbpswd=${DB_PSWD_PROD}" \
+        -n prod
+
+!["023"](img/023.png "023")
+
+!["024"](img/024.png "024")
+
+!["025"](img/025.png "025")
