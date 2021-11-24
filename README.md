@@ -34,10 +34,20 @@ See e.g.
 !["001"](img/001.png "001")
 
 * To keep things simpler initially, we'll start developing our helm chart with the target namespace and the `dockerlogin` (Docker-repository login creds) and the `todoapi-configs` (DB username/password) secrets pre-deployed to that target namespace.
+  We'll update that setup in Part 4, below.
+
+***Note: The "final" version of the `todoapi` project with its completed helm charts and updated `build` folder, along with informative README files within the `build` folder, is included in the `master` branch at <https://github.com/itt-learning-groups/todoapi/tree/master/build>***
 
 ### 2. Create a helm chart from scratch
 
-* Create the simplest initial version of a valid helm chart in `/build/helm-fromscratch`
+* Create the simplest initial version of a valid helm chart in `build/helm/chart_from_scratch`
+
+      cd build
+      mkdir helm && cd helm
+      mkdir chart_from_scratch && cd chart_from_scratch
+      mkdir todoapi && cd todoapi
+
+  Then add a `Chart.yml` and `templates` directory:
 
 !["003"](img/003.png "003")
 
@@ -145,10 +155,11 @@ Now we can run the following to deploy to `qa`:
 
 ### 3. Create a helm chart using the helm starter
 
-* Create the chart scaffold in `/build/helm-fromstarter`
+* Create the chart scaffold in `build/helm/chart_from_helm_starter`
 
     cd build
-    mkdir helm-fromstarter && cd helm-fromstarter
+    mkdir helm && cd helm
+    mkdir chart_from_helm_starter && cd chart_from_helm_starter
     helm create todoapi
 
 !["002"](img/002.png "002")
